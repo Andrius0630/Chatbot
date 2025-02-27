@@ -275,6 +275,7 @@ class Bot {
                 case NEUTRAL  -> System.out.printf("\n> Thanks for stopping by, %s! If you ever want to chat again, I\'m here. Have a great day!\n", userName);
             }
         }
+        scanner.close();
         System.exit(0);
     }
 
