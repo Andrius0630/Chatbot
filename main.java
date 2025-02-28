@@ -22,8 +22,8 @@ class Main {
 
 class Bot {
     private String botName = "Dr. Chat";
-    private String botThematic = "psychologist";
     private String userName;
+    private static final byte MAX_USERNAME_SIZE = 15;
 
     // variables for randomly chosen bot phrases
     private Random rand = new Random();
@@ -39,7 +39,7 @@ class Bot {
 
     
     // IMPORTANT! Bot speaking is dependent on patient's (user's) mood
-    // IMPORTANT! If bot sees in patient's input, that patient is happy/sad/worried/neutral, bot starts printing phrases that belong to the "happy/sad/worried/neutral mood" arrays
+    // IMPORTANT! If bot sees in patient's input, that patient is happy/sad/worried/neutral, bot starts printing random phrases that belong to the "happy/sad/worried/neutral mood" arrays
 
     // initializing bot first state
     private Mood patientMood = Mood.BASE;
@@ -72,7 +72,6 @@ class Bot {
         "Moments like these make life beautiful",
         "Smiles are meant to be shared"
     };
-
 
     private String[] sadMoodQuestionList = {
         "Is there something that usually makes you feel better?",
@@ -199,9 +198,16 @@ class Bot {
 
 
     private void botGreet() {
-        System.out.printf("> Greetings! I am a %s bot named %s. Throughout our conversation you can type \"bye\" to end.\n", botThematic, botName);
-        System.out.printf("> Please enter your name below to start our therapy!\n");
-        userName = getUserInput();
+        System.out.printf("> Greetings! I am a psychologist bot named %s. Throughout our conversation you can type \"bye\" to end.\n", botName);
+        System.out.printf("> Please enter your name below to start our therapy! Maximum length of name is %d characters.\n", MAX_USERNAME_SIZE);
+        while (true) { 
+            userName = getUserInput();
+            if (userName.length() > MAX_USERNAME_SIZE)
+                System.out.printf("> Your user name is longer than %d! Please enter your name below again...\n", MAX_USERNAME_SIZE);
+            else
+                break;
+        }
+        
         System.out.printf("> Fantastic! Nice to meet you, %s!\n", userName);
     }
 
@@ -211,9 +217,18 @@ class Bot {
     }
 
     private String getUserInput() {
-        System.out.printf("> ");
-        String input = scanner.nextLine();
+        String input;
+        while (true) {
+            System.out.printf("> ");
+            input = scanner.nextLine();
 
+            if (!input.isBlank())
+                break;
+            else
+                botSay("Sorry, but input cannot be blank! Please try again...");
+
+        }
+        
         // if patient types word "bye" bot ends conversation
         if (input.toLowerCase().contains("bye"))
             botBye();
