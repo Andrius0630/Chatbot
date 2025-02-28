@@ -4,12 +4,11 @@ import java.util.Scanner;
 /*
 
 What to fix:
-    1) It has some similar responses that are unecessary.
+    1) It would be great if questions did not repeat twice in a row.
     2) If a user does not include a recognizable mood keyword in their first response, the bot stays in the BASE state and only asks the user to "describe it in a different way." This could be slightly improved by offering a neutral response instead of just stating confusion. While the bot uses random responses, the lists of questions and responses are relatively small. Over time, the bot's responses may feel repetitive. The bot does not validate user input beyond checking for mood keywords. For example, it does not handle empty input or excessively long input.
     3) No Input Length Validation for Name: A very long or empty name could cause formatting issues. Adding a simple validation to ensure a reasonable name length would improve usability.
     4) Some Code Duplication: The code repeats similar logic for handling different moods in several places. For example, the switch statement inside botLaunchMainConversationLoop() could be refactored into a single method that accepts the mood as a parameter. Scanner Resource is Never Closed: The Scanner scanner = new Scanner(System.in); should be closed properly at the end to prevent resource leaks.
     5) "The user has to shut down the program to return to the menu.", "Word lists could be arranged horizontally to save space.", "It is good practice to start method names with a verb."
-    6) It would be great if questions did not repeat twice in a row.
 
 */
 
@@ -206,7 +205,7 @@ class Bot {
         System.out.printf("> Fantastic! Nice to meet you, %s!\n", userName);
     }
 
-    private void botSays(String phrase) {
+    private void botSay(String phrase) {
         System.out.printf("\n> ");
         System.out.println(phrase);
     }
@@ -235,27 +234,27 @@ class Bot {
                     randomBotResponse = greatMoodResponseList[rand.nextInt(greatMoodResponseList.length)];
                     randomBotQuestion = greatMoodQuestionList[rand.nextInt(greatMoodQuestionList.length)];
                     System.out.printf("> %s, %s! ", randomBotResponse, userName);
-                    botSays(randomBotQuestion);
+                    botSay(randomBotQuestion);
                 }
                 case SAD -> {
                     randomBotResponse = sadMoodResponseList[rand.nextInt(sadMoodResponseList.length)];
                     randomBotQuestion = sadMoodQuestionList[rand.nextInt(sadMoodQuestionList.length)];
                     System.out.printf("> %s, %s! ", randomBotResponse, userName);
-                    botSays(randomBotQuestion);
+                    botSay(randomBotQuestion);
                 }
                 case STRESSED -> {
                     randomBotResponse = stressedMoodResponseList[rand.nextInt(stressedMoodResponseList.length)];
                     randomBotQuestion = stressedMoodQuestionList[rand.nextInt(stressedMoodQuestionList.length)];
                     System.out.printf("> %s, %s! ", randomBotResponse, userName);
-                    botSays(randomBotQuestion);
+                    botSay(randomBotQuestion);
                 }
                 case NEUTRAL -> {
                     randomBotResponse = neutralMoodResponseList[rand.nextInt(neutralMoodResponseList.length)];
                     randomBotQuestion = neutralMoodQuestionList[rand.nextInt(neutralMoodQuestionList.length)];
                     System.out.printf("> %s, %s! ", randomBotResponse, userName);
-                    botSays(randomBotQuestion);
+                    botSay(randomBotQuestion);
                 }
-                default -> botSays(firstMetPhrase);
+                default -> botSay(firstMetPhrase);
             }
             // getting patient's input
             userInput = getUserInput().toLowerCase();
