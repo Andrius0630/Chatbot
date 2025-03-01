@@ -22,16 +22,16 @@ class Main {
 
 class Bot {
     private String botName = "Dr. Chat";
-    private String userName;
+    private String userName = "";
     private static final byte MAX_USERNAME_SIZE = 15;
 
     // variables for randomly chosen bot phrases
     private Random rand = new Random();
-    private String randomBotQuestion;
-    private String randomBotResponse;
+    private String randomBotQuestion = "";
+    private String randomBotResponse = "";
     
     private Scanner scanner = new Scanner(System.in);
-    private String userInput;
+    private String userInput = "";
     
     // phrase that bot says after entering your name
     private String firstMetPhrase = "Are you feeling happy, sad, stressed, or neutral?";
@@ -217,7 +217,7 @@ class Bot {
     }
 
     private String getUserInput() {
-        String input;
+        String input = "";
         while (true) {
             System.out.printf("> ");
             input = scanner.nextLine();
