@@ -5,10 +5,9 @@ import java.util.Scanner;
 
 What to fix:
     1) It would be great if questions did not repeat twice in a row.
-    2) If a user does not include a recognizable mood keyword in their first response, the bot stays in the BASE state and only asks the user to "describe it in a different way." This could be slightly improved by offering a neutral response instead of just stating confusion. While the bot uses random responses, the lists of questions and responses are relatively small. Over time, the bot's responses may feel repetitive. The bot does not validate user input beyond checking for mood keywords. For example, it does not handle empty input or excessively long input.
-    3) No Input Length Validation for Name: A very long or empty name could cause formatting issues. Adding a simple validation to ensure a reasonable name length would improve usability.
-    4) Some Code Duplication: The code repeats similar logic for handling different moods in several places. For example, the switch statement inside botLaunchMainConversationLoop() could be refactored into a single method that accepts the mood as a parameter. Scanner Resource is Never Closed: The Scanner scanner = new Scanner(System.in); should be closed properly at the end to prevent resource leaks.
-    5) "The user has to shut down the program to return to the menu.", "Word lists could be arranged horizontally to save space.", "It is good practice to start method names with a verb."
+    2) No Input Length Validation for Name: A very long or empty name could cause formatting issues. Adding a simple validation to ensure a reasonable name length would improve usability.
+    3) The code repeats similar logic for handling different moods in several places. For example, the switch statement inside botLaunchMainConversationLoop() could be refactored into a single method that accepts the mood as a parameter.
+    4) The user has to shut down the program to return to the menu, word lists could be arranged horizontally to save space, it is good practice to start method names with a verb
 
 */
 
@@ -21,21 +20,21 @@ class Main {
 }
 
 class Bot {
-    private String botName = "Dr. Chat";
+    private final String botName = "Dr. Chat";
     private String userName = "";
-    private static final byte MAX_USERNAME_SIZE = 15;
+    private final byte MAX_USERNAME_SIZE = 15;
 
     // variables for randomly chosen bot phrases
-    private Random rand = new Random();
+    private final Random rand = new Random();
     private String randomBotQuestion = "";
     private String randomBotResponse = "";
     
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
     private String userInput = "";
     
-    // phrase that bot says after entering your name
-    private String firstMetPhrase = "Are you feeling happy, sad, stressed, or neutral?";
-
+    // standart bot's phrases
+    private final String firstMetPhrase = "Are you feeling happy, sad, stressed, or neutral?";
+    
 
     
     // IMPORTANT! Bot speaking is dependent on patient's (user's) mood
@@ -47,105 +46,105 @@ class Bot {
 
 
     // initializing bot's questions and responses for each patient's mood
-    private String[] greatMoodQuestionList = {
-        "What made your day so good?",
-        "What's the best thing that happened today?",
-        "Do you have any fun plans coming up?",
-        "Is there something or someone that made your day special?",
-        "If you could celebrate right now, how would you do it?",
-        "What\'s a small thing that made you smile today?",
-        "What\'s something you\'re grateful for?",
-        "Have you shared your happiness with anyone else today?",
-        "What\'s a song that perfectly matches your mood right now?",
-        "If today had a theme song, what would it be?"
+    private final Phrase[] greatMoodQuestionList = {
+        new Phrase("What made your day so good?"),
+        new Phrase("What's the best thing that happened today?"),
+        new Phrase("Do you have any fun plans coming up?"),
+        new Phrase("Is there something or someone that made your day special?"),
+        new Phrase("If you could celebrate right now, how would you do it?"),
+        new Phrase("What\'s a small thing that made you smile today?"),
+        new Phrase("What\'s something you\'re grateful for?"),
+        new Phrase("Have you shared your happiness with anyone else today?"),
+        new Phrase("What\'s a song that perfectly matches your mood right now?"),
+        new Phrase("If today had a theme song, what would it be?")
     };
 
-    private String[] greatMoodResponseList = {
-        "That's great to hear",
-        "That\'s wonderful to hear",
-        "Happiness is contagious",
-        "I love hearing good news",
-        "You seem to be in a fantastic mood",
-        "Life\'s little joys make a big difference",
-        "Your positivity is inspiring",
-        "Keep shining and spreading joy",
-        "Moments like these make life beautiful",
-        "Smiles are meant to be shared"
+    private final Phrase[] greatMoodResponseList = {
+        new Phrase("That's great to hear, %s!"),
+        new Phrase("That\'s wonderful to hear, %s!"),
+        new Phrase("Happiness is contagious, %s!"),
+        new Phrase("I love hearing good news, %s!"),
+        new Phrase("You seem to be in a fantastic mood, %s!"),
+        new Phrase("Life\'s little joys make a big difference, %s!"),
+        new Phrase("Your positivity is inspiring, %s!"),
+        new Phrase("Keep shining and spreading joy, %s!"),
+        new Phrase("Moments like these make life beautiful, %s!"),
+        new Phrase("Smiles are meant to be shared, %s!")
     };
 
-    private String[] sadMoodQuestionList = {
-        "Is there something that usually makes you feel better?",
-        "What's one thing you're proud of?",
-        "Have you been able to take care of yourself today?",
-        "What is something that brings you comfort?",
-        "If you could do anything right now to feel better, what would it be?",
-        "What\'s something kind you\'ve done for yourself recently?",
-        "Have you had moments like this before, and how did you get through them?"
+    private final Phrase[] sadMoodQuestionList = {
+        new Phrase("Is there something that usually makes you feel better?"),
+        new Phrase("What's one thing you're proud of?"),
+        new Phrase("Have you been able to take care of yourself today?"),
+        new Phrase("What is something that brings you comfort?"),
+        new Phrase("If you could do anything right now to feel better, what would it be?"),
+        new Phrase("What\'s something kind you\'ve done for yourself recently?"),
+        new Phrase("Have you had moments like this before, and how did you get through them?")
     };
 
-    private String[] sadMoodResponseList = {
-        "I'm really sorry to hear that",
-        "It's okay to feel sad sometimes",
-        "You're not alone in this",
-        "I believe in you",
-        "Tough times don\'t last, but strong people do",
-        "Your feelings are valid, and I\'m here for you",
-        "You deserve kindness, including from yourself",
-        "I wish I could give you a virtual hug right now",
-        "Remember, emotions come and go - you're stronger than you think"
+    private final Phrase[] sadMoodResponseList = {
+        new Phrase("I'm really sorry to hear that, %s..."),
+        new Phrase("It's okay to feel sad sometimes, %s!"),
+        new Phrase("You're not alone in this, %s!"),
+        new Phrase("I believe in you, %s!"),
+        new Phrase("Tough times don\'t last, but strong people do, %s!"),
+        new Phrase("Your feelings are valid, and I\'m here for you, %s!"),
+        new Phrase("You deserve kindness, including from yourself, %s!"),
+        new Phrase("I wish I could give you a virtual hug right now, %s!"),
+        new Phrase("Remember, emotions come and go - you're stronger than you think, %s!")
     };
 
-    private String[] stressedMoodQuestionList = {
-        "Have you tried taking a few deep breaths?",
-        "What is your favorite way to relax?",
-        "What\'s worked for you in the past when you\'ve felt like this?",
-        "Is there anything specific that\'s causing you stress? Describe it.",
-        "What\'s one thing you can control right now? Describe it.",
-        "How can you be kind to yourself today?"
+    private final Phrase[] stressedMoodQuestionList = {
+        new Phrase("Have you tried taking a few deep breaths?"),
+        new Phrase("What is your favorite way to relax?"),
+        new Phrase("What\'s worked for you in the past when you\'ve felt like this?"),
+        new Phrase("Is there anything specific that\'s causing you stress? Describe it."),
+        new Phrase("What\'s one thing you can control right now? Describe it."),
+        new Phrase("How can you be kind to yourself today?")
     };
 
-    private String[] stressedMoodResponseList = {
-        "Stress can be overwhelming, but you\'re not alone",
-        "Sometimes a quick walk or listening to music can help",
-        "It sounds like you have a lot on your mind, but you\'re strong enough to handle it",
-        "I know things can feel tough, but you've handled challenges before",
-        "Remember to take things one step at a time",
-        "Even small breaks can help reset your mind",
-        "You're doing better than you think",
-        "It's okay to slow down and breathe",
-        "You have the strength to get through this",
-        "Be kind to yourself - you\'re doing your best"
+    private final Phrase[] stressedMoodResponseList = {
+        new Phrase("Stress can be overwhelming, but you\'re not alone, %s!"),
+        new Phrase("Sometimes a quick walk or listening to music can help, %s!"),
+        new Phrase("It sounds like you have a lot on your mind, but you\'re strong enough to handle it, %s!"),
+        new Phrase("I know things can feel tough, but you've handled challenges before, %s!"),
+        new Phrase("Remember to take things one step at a time, %s!"),
+        new Phrase("Even small breaks can help reset your mind, %s!"),
+        new Phrase("You're doing better than you think, %s!"),
+        new Phrase("It's okay to slow down and breathe, %s!"),
+        new Phrase("You have the strength to get through this, %s!"),
+        new Phrase("Be kind to yourself - you\'re doing your best, %s!")
     };
 
-    private String[] neutralMoodQuestionList = {
-        "Did anything interesting happen today? Describe it.",
-        "What\'s something you\'re looking forward to?",
-        "What\'s a hobby or activity you enjoy?",
-        "If you could be anywhere right now, where would you go?",
-        "Is there something new you\'ve been wanting to try?",
-        "Do you prefer quiet moments or exciting adventures?",
-        "What\'s a simple pleasure that makes your day better?",
-        "If you could instantly master any skill, what would it be?",
-        "What\'s the last thing that made you laugh?"
+    private final Phrase[] neutralMoodQuestionList = {
+        new Phrase("Did anything interesting happen today? Describe it."),
+        new Phrase("What\'s something you\'re looking forward to?"),
+        new Phrase("What\'s a hobby or activity you enjoy?"),
+        new Phrase("If you could be anywhere right now, where would you go?"),
+        new Phrase("Is there something new you\'ve been wanting to try?"),
+        new Phrase("Do you prefer quiet moments or exciting adventures?"),
+        new Phrase("What\'s a simple pleasure that makes your day better?"),
+        new Phrase("If you could instantly master any skill, what would it be?"),
+        new Phrase("What\'s the last thing that made you laugh?")
     };
 
-    private String[] neutralMoodResponseList = {
-        "Sounds like a regular day",
-        "Sometimes quiet days are the best",
-        "It\'s nice to have a balance between excitement and peace",
-        "Neutral is a good place to be",
-        "Even uneventful days can have small joys",
-        "Routine can be comforting in its own way",
-        "A calm day can be refreshing",
-        "It\'s always good to have moments to just breathe",
-        "Not every day has to be extraordinary to be meaningful",
-        "Appreciating the little things can make all the difference"
+    private final Phrase[] neutralMoodResponseList = {
+        new Phrase("Sounds like a regular day, %s."),
+        new Phrase("Sometimes quiet days are the best, %s."),
+        new Phrase("It\'s nice to have a balance between excitement and peace, %s."),
+        new Phrase("Neutral is a good place to be, %s."),
+        new Phrase("Even uneventful days can have small joys, %s."),
+        new Phrase("Routine can be comforting in its own way, %s."),
+        new Phrase("A calm day can be refreshing, %s."),
+        new Phrase("It\'s always good to have moments to just breathe, %s."),
+        new Phrase("Not every day has to be extraordinary to be meaningful, %s."),
+        new Phrase("Appreciating the little things can make all the difference, %s.")
     };
 
 
 
     // initializing words that bot checks in patient's input
-    private String[] greatWordsToCheckList = {
+    private final String[] greatWordsToCheckList = {
         "fine",
         "happy",
         "great",
@@ -157,7 +156,7 @@ class Bot {
         "excited"
     };
 
-    private String[] sadWordsToCheckList = {
+    private final String[] sadWordsToCheckList = {
         "sad",
         "down",
         "upset",
@@ -168,7 +167,7 @@ class Bot {
         "heartbroken"
     };
 
-    private String[] stressedWordsToCheckList = {
+    private final String[] stressedWordsToCheckList = {
         "stressed",
         "overwhelmed",
         "anxious",
@@ -183,7 +182,7 @@ class Bot {
         "angry"
     };
 
-    private String[] neutralWordsToCheckList = {
+    private final String[] neutralWordsToCheckList = {
         "neutral",
         "ok",
         "normal",
@@ -196,24 +195,24 @@ class Bot {
     };
 
 
-
     private void botGreet() {
-        System.out.printf("> Greetings! I am a psychologist bot named %s. Throughout our conversation you can type \"bye\" to end.\n", botName);
-        System.out.printf("> Please enter your name below to start our therapy! Maximum length of name is %d characters.\n", MAX_USERNAME_SIZE);
-        while (true) { 
+        botSay("Greetings! I am a psychologist bot named %s. Throughout our conversation you can type \"bye\" to end.", botName);
+        botSay("Please enter your name below to start our therapy! Maximum length of name is %d characters.", MAX_USERNAME_SIZE);
+        while (true) {
             userName = getUserInput();
             if (userName.length() > MAX_USERNAME_SIZE)
-                System.out.printf("> Your user name is longer than %d! Please enter your name below again...\n", MAX_USERNAME_SIZE);
+                botSay("Your user name is longer than %d! Please enter your name below again...", MAX_USERNAME_SIZE);
             else
                 break;
         }
         
-        System.out.printf("> Fantastic! Nice to meet you, %s!\n", userName);
+       botSay("Fantastic! Nice to meet you, %s!", userName);
     }
 
-    private void botSay(String phrase) {
+    private void botSay(String phrase, Object... args) {
         System.out.printf("\n> ");
-        System.out.println(phrase);
+        System.out.printf(phrase, args);
+        System.out.printf("\n");
     }
 
     private String getUserInput() {
@@ -237,36 +236,100 @@ class Bot {
         return input;
     }
 
+    private void botChooseRandomAnswer(Phrase[] responseList, Phrase[] questionList) {
+        boolean responseHasBeenChosen = false;
+        boolean questionHasBeenChosen = false;
+
+        while (!responseHasBeenChosen || !questionHasBeenChosen) {
+            int randomResponseIndex = rand.nextInt(responseList.length);
+            int randomQuestionIndex = rand.nextInt(questionList.length);
+
+            // Decrement timeouts for responses
+            for (Phrase elem : responseList) {
+                if (elem.timeoutForPhrase > 0) {
+                    elem.timeoutForPhrase--;
+                }
+            }
+
+            if (responseList[randomResponseIndex].timeoutForPhrase == 0) {
+                randomBotResponse = responseList[randomResponseIndex].phrase;
+                responseList[randomResponseIndex].resetTimeoutForPhrase();
+                responseHasBeenChosen = true;
+            }
+
+
+            // Decrement timeouts for questions
+            for (Phrase elem : questionList) {
+                if (elem.timeoutForPhrase > 0) {
+                    elem.timeoutForPhrase--;
+                }
+            }
+
+            if (questionList[randomQuestionIndex].timeoutForPhrase == 0) {
+                randomBotQuestion = questionList[randomQuestionIndex].phrase;
+                questionList[randomQuestionIndex].resetTimeoutForPhrase();
+                questionHasBeenChosen = true;
+            }
+        }
+    }
+
+    private void initializeTimeouts() {
+        for (Phrase elem : greatMoodQuestionList) {
+            elem.defaultTimeoutForPhrase = (short) greatMoodQuestionList.length;
+        }
+        for (Phrase elem : greatMoodResponseList) {
+            elem.defaultTimeoutForPhrase = (short) greatMoodResponseList.length;
+        }
+
+        for (Phrase elem : sadMoodQuestionList) {
+            elem.defaultTimeoutForPhrase = (short) sadMoodQuestionList.length;
+        }
+        for (Phrase elem : sadMoodResponseList) {
+            elem.defaultTimeoutForPhrase = (short) sadMoodResponseList.length;
+        }
+
+        for (Phrase elem : stressedMoodQuestionList) {
+            elem.defaultTimeoutForPhrase = (short) stressedMoodQuestionList.length;
+        }
+        for (Phrase elem : stressedMoodResponseList) {
+            elem.defaultTimeoutForPhrase = (short) stressedMoodResponseList.length;
+        }
+
+        for (Phrase elem : neutralMoodQuestionList) {
+            elem.defaultTimeoutForPhrase = (short) neutralMoodQuestionList.length;
+        }
+        for (Phrase elem : neutralMoodResponseList) {
+            elem.defaultTimeoutForPhrase = (short) neutralMoodResponseList.length;
+        }
+    }
+
     // main dialog loop between patient and bot 
     public void botLaunchMainConversationLoop() {
         botGreet(); // bot greets and asks for patient's name
+        initializeTimeouts();
 
         // main conversation loop
         while (true) {
             // depending on patient's mood bot randomly picks and prints phrases that correspond to the patient's mood
             switch (patientMood) {
                 case HAPPY -> {
-                    randomBotResponse = greatMoodResponseList[rand.nextInt(greatMoodResponseList.length)];
-                    randomBotQuestion = greatMoodQuestionList[rand.nextInt(greatMoodQuestionList.length)];
-                    System.out.printf("> %s, %s! ", randomBotResponse, userName);
+                    botChooseRandomAnswer(greatMoodResponseList, greatMoodQuestionList);
+                    botSay(randomBotResponse, userName);
                     botSay(randomBotQuestion);
                 }
                 case SAD -> {
-                    randomBotResponse = sadMoodResponseList[rand.nextInt(sadMoodResponseList.length)];
-                    randomBotQuestion = sadMoodQuestionList[rand.nextInt(sadMoodQuestionList.length)];
-                    System.out.printf("> %s, %s! ", randomBotResponse, userName);
+                    botChooseRandomAnswer(sadMoodResponseList, sadMoodQuestionList);
+                    botSay(randomBotResponse, userName);
                     botSay(randomBotQuestion);
                 }
                 case STRESSED -> {
-                    randomBotResponse = stressedMoodResponseList[rand.nextInt(stressedMoodResponseList.length)];
-                    randomBotQuestion = stressedMoodQuestionList[rand.nextInt(stressedMoodQuestionList.length)];
-                    System.out.printf("> %s, %s! ", randomBotResponse, userName);
+                    botChooseRandomAnswer(stressedMoodResponseList, stressedMoodQuestionList);
+                    botSay(randomBotResponse, userName);
                     botSay(randomBotQuestion);
                 }
                 case NEUTRAL -> {
-                    randomBotResponse = neutralMoodResponseList[rand.nextInt(neutralMoodResponseList.length)];
-                    randomBotQuestion = neutralMoodQuestionList[rand.nextInt(neutralMoodQuestionList.length)];
-                    System.out.printf("> %s, %s! ", randomBotResponse, userName);
+                    botChooseRandomAnswer(neutralMoodResponseList, neutralMoodQuestionList);
+                    botSay(randomBotResponse, userName);
                     botSay(randomBotQuestion);
                 }
                 default -> botSay(firstMetPhrase);
@@ -275,13 +338,13 @@ class Bot {
             userInput = getUserInput().toLowerCase();
 
             // checking for words in patient's input that can describe patient's mood
-            if (checkForMoodWords(greatWordsToCheckList))
+            if (checkForMoodWordsInInput(greatWordsToCheckList))
                 patientMood = Mood.HAPPY;
-            else if (checkForMoodWords(sadWordsToCheckList))
+            else if (checkForMoodWordsInInput(sadWordsToCheckList))
                 patientMood = Mood.SAD;
-            else if (checkForMoodWords(stressedWordsToCheckList))
+            else if (checkForMoodWordsInInput(stressedWordsToCheckList))
                 patientMood = Mood.STRESSED;
-            else if (checkForMoodWords(neutralWordsToCheckList))
+            else if (checkForMoodWordsInInput(neutralWordsToCheckList))
                 patientMood = Mood.NEUTRAL;
             else if (patientMood == Mood.BASE)
                 System.out.println("\n> Sorry, I don't understand. Could you describe it in a different way?");
@@ -292,28 +355,41 @@ class Bot {
         // check for patient's name
         // if patient entered "bye" instead of his name, then conversation is ended with unique bot's response
         if (patientMood == Mood.BASE) {
-            System.out.printf("\n> If you don\'t want to have a conversation with me it is totally fine, have a nice day!\n");
+            botSay("If you don\'t want to have a conversation with me it is totally fine, have a nice day!");
         } else {
             // bot decides what to say in the end depending on patient's mood
             switch (patientMood) {
-                case HAPPY    -> System.out.printf("\n> It was great chatting with you, %s! Keep spreading that positive energy! Have a fantastic day!\n", userName);
-                case SAD      -> System.out.printf("\n> I\'m really glad we talked, %s. Remember, you\'re not alone, and I\'m always here if you need me. Take care.\n", userName);
-                case STRESSED -> System.out.printf("\n> I know things might be tough, %s, but you\'ve got this! Try to take a deep breath and do something nice for yourself today. See you next time!\n", userName);
-                case NEUTRAL  -> System.out.printf("\n> Thanks for stopping by, %s! If you ever want to chat again, I\'m here. Have a great day!\n", userName);
+                case HAPPY    -> botSay("It was great chatting with you, %s! Keep spreading that positive energy! Have a fantastic day!", userName);
+                case SAD      -> botSay("I\'m really glad we talked, %s. Remember, you\'re not alone, and I\'m always here if you need me. Take care.", userName);
+                case STRESSED -> botSay("I know things might be tough, %s, but you\'ve got this! Try to take a deep breath and do something nice for yourself today. See you next time!", userName);
+                case NEUTRAL  -> botSay("Thanks for stopping by, %s! If you ever want to chat again, I\'m here. Have a great day!", userName);
             }
         }
-        scanner.close();
         System.exit(0);
     }
 
     // function that check's words that can describe patient's mood
-    private boolean checkForMoodWords(String[] arrayOfMoodWords) {
+    private boolean checkForMoodWordsInInput(String[] arrayOfMoodWords) {
         for (String word : arrayOfMoodWords) {
             if (userInput.contains(word)) {
                 return true;
             }
         }
         return false;
+    }
+}
+
+class Phrase {
+    public String phrase = "";
+    public short defaultTimeoutForPhrase = 4;
+    public short timeoutForPhrase = 0;
+
+    public Phrase(String newPhrase) {
+        this.phrase = newPhrase;
+    }
+
+    public void resetTimeoutForPhrase() {
+        timeoutForPhrase = defaultTimeoutForPhrase;
     }
 }
 
