@@ -253,7 +253,7 @@ class Bot {
 
             if (responseList[randomResponseIndex].timeoutForPhrase == 0) {
                 randomBotResponse = responseList[randomResponseIndex].phrase;
-                responseList[randomResponseIndex].resetTimeoutForPhrase();
+                responseList[randomResponseIndex].timeoutForPhrase = (short) responseList.length;
                 responseHasBeenChosen = true;
             }
 
@@ -267,46 +267,16 @@ class Bot {
 
             if (questionList[randomQuestionIndex].timeoutForPhrase == 0) {
                 randomBotQuestion = questionList[randomQuestionIndex].phrase;
-                questionList[randomQuestionIndex].resetTimeoutForPhrase();
+                questionList[randomQuestionIndex].timeoutForPhrase = (short) questionList.length;
                 questionHasBeenChosen = true;
             }
-        }
-    }
-
-    private void initializeTimeouts() {
-        for (Phrase elem : greatMoodQuestionList) {
-            elem.defaultTimeoutForPhrase = (short) greatMoodQuestionList.length;
-        }
-        for (Phrase elem : greatMoodResponseList) {
-            elem.defaultTimeoutForPhrase = (short) greatMoodResponseList.length;
-        }
-
-        for (Phrase elem : sadMoodQuestionList) {
-            elem.defaultTimeoutForPhrase = (short) sadMoodQuestionList.length;
-        }
-        for (Phrase elem : sadMoodResponseList) {
-            elem.defaultTimeoutForPhrase = (short) sadMoodResponseList.length;
-        }
-
-        for (Phrase elem : stressedMoodQuestionList) {
-            elem.defaultTimeoutForPhrase = (short) stressedMoodQuestionList.length;
-        }
-        for (Phrase elem : stressedMoodResponseList) {
-            elem.defaultTimeoutForPhrase = (short) stressedMoodResponseList.length;
-        }
-
-        for (Phrase elem : neutralMoodQuestionList) {
-            elem.defaultTimeoutForPhrase = (short) neutralMoodQuestionList.length;
-        }
-        for (Phrase elem : neutralMoodResponseList) {
-            elem.defaultTimeoutForPhrase = (short) neutralMoodResponseList.length;
         }
     }
 
     // main dialog loop between patient and bot 
     public void botLaunchMainConversationLoop() {
         botGreet(); // bot greets and asks for patient's name
-        initializeTimeouts();
+
 
         // main conversation loop
         while (true) {
@@ -381,15 +351,10 @@ class Bot {
 
 class Phrase {
     public String phrase = "";
-    public short defaultTimeoutForPhrase = 4;
     public short timeoutForPhrase = 0;
 
     public Phrase(String newPhrase) {
         this.phrase = newPhrase;
-    }
-
-    public void resetTimeoutForPhrase() {
-        timeoutForPhrase = defaultTimeoutForPhrase;
     }
 }
 
