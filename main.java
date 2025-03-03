@@ -4,10 +4,9 @@ import java.util.Scanner;
 /*
 
 What to fix:
-    1) It would be great if questions did not repeat twice in a row.
-    2) No Input Length Validation for Name: A very long or empty name could cause formatting issues. Adding a simple validation to ensure a reasonable name length would improve usability.
-    3) The code repeats similar logic for handling different moods in several places. For example, the switch statement inside botLaunchMainConversationLoop() could be refactored into a single method that accepts the mood as a parameter.
-    4) The user has to shut down the program to return to the menu, word lists could be arranged horizontally to save space, it is good practice to start method names with a verb
+    1) No Input Length Validation for Name
+    2) The code repeats similar logic for handling different moods in several places. For example, the switch statement inside botLaunchMainConversationLoop() could be refactored into a single method that accepts the mood as a parameter.
+    3) The user has to shut down the program to return to the menu, word lists could be arranged horizontally to save space, it is good practice to start method names with a verb
 
 */
 
@@ -225,7 +224,6 @@ class Bot {
                 break;
             else
                 botSay("Sorry, but input cannot be blank! Please try again...");
-
         }
         
         // if patient types word "bye" bot ends conversation
