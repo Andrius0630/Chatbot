@@ -4,11 +4,9 @@ import java.util.Scanner;
 /*
 
 What to fix:
-    1) Add more bot's questions
     2) The code repeats similar logic for handling different moods in several places. For example, the switch statement inside startConversationLoop() could be refactored into a single method that accepts the mood as a parameter.
 
 */
-
 
 class Main {
     public static void main(String[] args) {
@@ -266,6 +264,7 @@ class Bot {
         botSay(askUserNamePhrase, MAX_USERNAME_LENGTH);
         while (true) {
             userName = getUserInput();
+
             if (!isBasicText(userName))
                 botSay(invalidUserNameCharactersPhrase);
             else if (isInputTooLong(userName, MAX_USERNAME_LENGTH))
@@ -348,10 +347,20 @@ class Bot {
         }
     }
 
-    private void handleMoodAnswers(Phrase[] responseList, Phrase[] questionList) {
+    private void makeMoodAnswer(Phrase[] responseList, Phrase[] questionList) {
         botChooseRandomAnswer(responseList, questionList);
         botSay(randomBotResponse, userName);
         botSay(randomBotQuestion);
+    }
+
+    private void handleMoodAnswers(Mood mood) {
+        switch (mood) {
+            case HAPPY    -> makeMoodAnswer(greatMoodResponseList, greatMoodQuestionList);
+            case SAD      -> makeMoodAnswer(sadMoodResponseList, sadMoodQuestionList);
+            case STRESSED -> makeMoodAnswer(stressedMoodResponseList, stressedMoodQuestionList);
+            case NEUTRAL  -> makeMoodAnswer(neutralMoodResponseList, neutralMoodQuestionList);
+            default       -> botSay(firstMetPhrase);
+        }
     }
 
     // main dialog loop between patient and bot 
@@ -362,15 +371,10 @@ class Bot {
             // main conversation loop
             while (true) {
                 // depending on patient's mood bot randomly picks and prints phrases that correspond to the patient's mood
-                switch (patientMood) {
-                    case HAPPY    -> handleMoodAnswers(greatMoodResponseList, greatMoodQuestionList);
-                    case SAD      -> handleMoodAnswers(sadMoodResponseList, sadMoodQuestionList);
-                    case STRESSED -> handleMoodAnswers(stressedMoodResponseList, stressedMoodQuestionList);
-                    case NEUTRAL  -> handleMoodAnswers(neutralMoodResponseList, neutralMoodQuestionList);
-                    default       -> botSay(firstMetPhrase);
-                }
+                handleMoodAnswers(patientMood);
                 // getting patient's input
                 userInput = getUserInput().toLowerCase();
+
                 if (userInput.toLowerCase().contains("main menu"))
                     break;
 
@@ -390,6 +394,15 @@ class Bot {
         }
     }
 
+    private void goodByeWithMood(Mood mood) {
+        switch (mood) {
+            case HAPPY    -> botSay(happyGoodbyePhrase, userName);
+            case SAD      -> botSay(sadGoodbyePhrase, userName);
+            case STRESSED -> botSay(stressedGoodbyePhrase, userName);
+            case NEUTRAL  -> botSay(neutralGoodbyePhrase, userName);
+        }
+    }
+
     private void goodBye() {
         // check for patient's name
         // if patient entered "bye" instead of his name, then conversation is ended with unique bot's response
@@ -397,12 +410,7 @@ class Bot {
             botSay(defaultGoodbyePhrase, userName);
         } else {
             // bot decides what to say in the end depending on patient's mood
-            switch (patientMood) {
-                case HAPPY    -> botSay(happyGoodbyePhrase, userName);
-                case SAD      -> botSay(sadGoodbyePhrase, userName);
-                case STRESSED -> botSay(stressedGoodbyePhrase, userName);
-                case NEUTRAL  -> botSay(neutralGoodbyePhrase, userName);
-            }
+            goodByeWithMood(patientMood);
         }
         scanner.close();
         System.exit(0);
