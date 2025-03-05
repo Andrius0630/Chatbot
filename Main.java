@@ -440,8 +440,6 @@ class Bot {
         scanner.close();
         System.exit(0);
     }
-
-
 }
 
 class Phrase {
