@@ -29,7 +29,8 @@ class Bot {
     private String userInput = "";
     
     // standart bot's phrases
-    private final String botIntroductionPhrase = "Greetings! I am a psychologist bot named %s. Throughout our conversation you can type \"bye\" to end or \"main menu\" to start new.";
+    private final String botIntroductionPhrase = "Greetings! I am a psychologist bot named %s."
+                                + "Throughout our conversation you can type \"bye\" to end or \"main menu\" to start new.";
     private final String askUserNamePhrase = "Please enter your name below to start our therapy! Maximum length of name is %d characters.";
     private final String userNameTooLongPhrase = "Your user name is longer than %d! Please enter your name below again...";
     private final String invalidUserNameCharactersPhrase = "Your name should only contain basic letters! Try again...";
@@ -42,7 +43,9 @@ class Bot {
 
     private final String happyGoodbyePhrase = "It was great chatting with you, %s! Keep spreading that positive energy! Have a fantastic day!";
     private final String sadGoodbyePhrase = "I\'m really glad we talked, %s. Remember, you\'re not alone, and I\'m always here if you need me. Take care.";
-    private final String stressedGoodbyePhrase = "I know things might be tough, %s, but you\'ve got this! Try to take a deep breath and do something nice for yourself today. See you next time!";
+    private final String stressedGoodbyePhrase = "I know things might be tough, %s, but you\'ve got this!"
+                                + "Try to take a deep breath and do something nice for yourself today. See you next time!";
+                                
     private final String neutralGoodbyePhrase = "Thanks for stopping by, %s! If you ever want to chat again, I\'m here. Have a great day!";
     private final String defaultGoodbyePhrase = "If you don\'t want to have a conversation with me it is totally fine, have a nice day!";
 
@@ -260,20 +263,20 @@ class Bot {
 
     private void greetPatient() {
         patientMood = Mood.BASE;
-        botSay(botIntroductionPhrase, botName);
-        botSay(askUserNamePhrase, MAX_USERNAME_LENGTH);
+        printPhrase(botIntroductionPhrase, botName);
+        printPhrase(askUserNamePhrase, MAX_USERNAME_LENGTH);
         while (true) {
             userName = getUserInput();
 
             if (!isBasicText(userName))
-                botSay(invalidUserNameCharactersPhrase);
+                printPhrase(invalidUserNameCharactersPhrase);
             else if (isInputTooLong(userName, MAX_USERNAME_LENGTH))
-                botSay(userNameTooLongPhrase, MAX_USERNAME_LENGTH);
+                printPhrase(userNameTooLongPhrase, MAX_USERNAME_LENGTH);
             else
                 break;
         }
         
-       botSay(userNameAcceptedPhrase, userName);
+       printPhrase(userNameAcceptedPhrase, userName);
     }
 
     private boolean isBasicText(String input) {
@@ -284,7 +287,7 @@ class Bot {
         return input.length() > maxLength;
     }
 
-    private void botSay(String phrase, Object... args) {
+    private void printPhrase(String phrase, Object... args) {
         System.out.printf("\n> ");
         System.out.printf(phrase, args);
         System.out.printf("\n");
@@ -299,7 +302,7 @@ class Bot {
             if (!input.isBlank())
                 break;
             else
-                botSay(emptyInputErrorPhrase);
+                printPhrase(emptyInputErrorPhrase);
         }
         
         // if patient types word "bye" bot ends conversation
@@ -310,7 +313,7 @@ class Bot {
         return input;
     }
 
-    private void botChooseRandomAnswer(Phrase[] responseList, Phrase[] questionList) {
+    private void chooseRandomAnswer(Phrase[] responseList, Phrase[] questionList) {
         boolean responseHasBeenChosen = false;
         boolean questionHasBeenChosen = false;
 
@@ -348,9 +351,9 @@ class Bot {
     }
 
     private void makeMoodAnswer(Phrase[] responseList, Phrase[] questionList) {
-        botChooseRandomAnswer(responseList, questionList);
-        botSay(randomBotResponse, userName);
-        botSay(randomBotQuestion);
+        chooseRandomAnswer(responseList, questionList);
+        printPhrase(randomBotResponse, userName);
+        printPhrase(randomBotQuestion);
     }
 
     private void handleMoodAnswers(Mood mood) {
@@ -359,7 +362,7 @@ class Bot {
             case SAD      -> makeMoodAnswer(sadMoodResponseList, sadMoodQuestionList);
             case STRESSED -> makeMoodAnswer(stressedMoodResponseList, stressedMoodQuestionList);
             case NEUTRAL  -> makeMoodAnswer(neutralMoodResponseList, neutralMoodQuestionList);
-            default       -> botSay(firstMetPhrase);
+            default       -> printPhrase(firstMetPhrase);
         }
     }
 
@@ -389,17 +392,17 @@ class Bot {
                 else if (containsMoodKeywords(neutralWordsToCheckList))
                     patientMood = Mood.NEUTRAL;
                 else if (patientMood == Mood.BASE)
-                    botSay(botUnrecognizedInputPhrase);
+                    printPhrase(botUnrecognizedInputPhrase);
             }
         }
     }
 
     private void goodByeWithMood(Mood mood) {
         switch (mood) {
-            case HAPPY    -> botSay(happyGoodbyePhrase, userName);
-            case SAD      -> botSay(sadGoodbyePhrase, userName);
-            case STRESSED -> botSay(stressedGoodbyePhrase, userName);
-            case NEUTRAL  -> botSay(neutralGoodbyePhrase, userName);
+            case HAPPY    -> printPhrase(happyGoodbyePhrase, userName);
+            case SAD      -> printPhrase(sadGoodbyePhrase, userName);
+            case STRESSED -> printPhrase(stressedGoodbyePhrase, userName);
+            case NEUTRAL  -> printPhrase(neutralGoodbyePhrase, userName);
         }
     }
 
@@ -407,9 +410,9 @@ class Bot {
         // check for patient's name
         // if patient entered "bye" instead of his name, then conversation is ended with unique bot's response
         if (patientMood == Mood.BASE) {
-            botSay(defaultGoodbyePhrase, userName);
+            printPhrase(defaultGoodbyePhrase, userName);
         } else {
-            // bot decides what to say in the end depending on patient's mood
+            // bot decides which phrase to say in the end depending on patient's mood
             goodByeWithMood(patientMood);
         }
         scanner.close();
