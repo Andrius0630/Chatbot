@@ -33,7 +33,7 @@ class Bot {
                                 + " Throughout our conversation you can type \"bye\" to end or \"main menu\" to start new.";
     private final String askUserNamePhrase = "Please enter your name below to start our therapy! Maximum length of name is %d characters.";
     private final String userNameTooLongPhrase = "Your user name is longer than %d! Please enter your name below again...";
-    private final String invalidUserNameCharactersPhrase = "Your name should only contain basic letters! Try again...";
+    private final String invalidUserNameCharactersPhrase = "Your name should only contain basic letters! Please enter your name below again...";
     private final String userNameAcceptedPhrase = "Fantastic! Nice to meet you, %s!";
 
     private final String firstMetPhrase = "Are you feeling happy, sad, stressed, or neutral?";
