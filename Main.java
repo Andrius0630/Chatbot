@@ -266,7 +266,7 @@ class Bot {
         printPhrase(botIntroductionPhrase, botName);
         printPhrase(askUserNamePhrase, MAX_USERNAME_LENGTH);
         while (true) {
-            userName = getUserInput();
+            userName = getAppropriateUserInput();
 
             if (!isBasicText(userName))
                 printPhrase(invalidUserNameCharactersPhrase);
@@ -294,23 +294,32 @@ class Bot {
     }
 
     private String getUserInput() {
+        return scanner.nextLine().trim();
+    }
+
+    private String getAppropriateUserInput() {
         String input = "";
+
         while (true) {
             System.out.printf("> ");
-            input = scanner.nextLine().trim();
+            input = getUserInput();
 
             if (!input.isBlank())
                 break;
             else
                 printPhrase(emptyInputErrorPhrase);
         }
-        
+
         // if patient types word "bye" bot ends conversation
         if (input.toLowerCase().contains("bye"))
             goodBye();
         
         System.out.printf("\n");
         return input;
+    }
+
+    private boolean userWantsToLogOut(String input) {
+        return !(input.toLowerCase().contains("main menu"));
     }
 
     private void chooseRandomAnswer(Phrase[] responseList, Phrase[] questionList) {
@@ -368,36 +377,49 @@ class Bot {
 
     // main dialog loop between patient and bot 
     public void startConversationLoop() {
+        boolean loggedIn = true;
         while (true) { 
             greetPatient(); // bot greets and asks for patient's name
 
             // main conversation loop
-            while (true) {
+            while (loggedIn) {
                 // depending on patient's mood bot randomly picks and prints phrases that correspond to the patient's mood
                 handleMoodAnswers(patientMood);
                 // getting patient's input
-                userInput = getUserInput().toLowerCase();
+                userInput = getAppropriateUserInput().toLowerCase();
 
-                if (userInput.toLowerCase().contains("main menu"))
-                    break;
-
+                loggedIn = userWantsToLogOut(userInput);
 
                 // checking for words in patient's input that can describe patient's mood
-                if (containsMoodKeywords(greatWordsToCheckList))
-                    patientMood = Mood.HAPPY;
-                else if (containsMoodKeywords(sadWordsToCheckList))
-                    patientMood = Mood.SAD;
-                else if (containsMoodKeywords(stressedWordsToCheckList))
-                    patientMood = Mood.STRESSED;
-                else if (containsMoodKeywords(neutralWordsToCheckList))
-                    patientMood = Mood.NEUTRAL;
-                else if (patientMood == Mood.BASE)
-                    printPhrase(botUnrecognizedInputPhrase);
+                checkTheMoodOfPatient();
             }
         }
     }
 
-    private void goodByeWithMood(Mood mood) {
+    private void checkTheMoodOfPatient() {
+        if (containsMoodKeywords(greatWordsToCheckList))
+            patientMood = Mood.HAPPY;
+        else if (containsMoodKeywords(sadWordsToCheckList))
+            patientMood = Mood.SAD;
+        else if (containsMoodKeywords(stressedWordsToCheckList))
+            patientMood = Mood.STRESSED;
+        else if (containsMoodKeywords(neutralWordsToCheckList))
+            patientMood = Mood.NEUTRAL;
+        else if (patientMood == Mood.BASE)
+            printPhrase(botUnrecognizedInputPhrase);
+    }
+
+    // function that check's words that can describe patient's mood
+    private boolean containsMoodKeywords(String[] arrayOfMoodWords) {
+        for (String word : arrayOfMoodWords) {
+            if (userInput.contains(word)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void goodByeUsingMoodPhrase(Mood mood) {
         switch (mood) {
             case HAPPY    -> printPhrase(happyGoodbyePhrase, userName);
             case SAD      -> printPhrase(sadGoodbyePhrase, userName);
@@ -413,21 +435,13 @@ class Bot {
             printPhrase(defaultGoodbyePhrase, userName);
         } else {
             // bot decides which phrase to say in the end depending on patient's mood
-            goodByeWithMood(patientMood);
+            goodByeUsingMoodPhrase(patientMood);
         }
         scanner.close();
         System.exit(0);
     }
 
-    // function that check's words that can describe patient's mood
-    private boolean containsMoodKeywords(String[] arrayOfMoodWords) {
-        for (String word : arrayOfMoodWords) {
-            if (userInput.contains(word)) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 }
 
 class Phrase {
