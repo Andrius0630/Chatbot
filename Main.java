@@ -30,7 +30,7 @@ class Bot {
     
     // standart bot's phrases
     private final String botIntroductionPhrase = "Greetings! I am a psychologist bot named %s."
-                                + "Throughout our conversation you can type \"bye\" to end or \"main menu\" to start new.";
+                                + " Throughout our conversation you can type \"bye\" to end or \"main menu\" to start new.";
     private final String askUserNamePhrase = "Please enter your name below to start our therapy! Maximum length of name is %d characters.";
     private final String userNameTooLongPhrase = "Your user name is longer than %d! Please enter your name below again...";
     private final String invalidUserNameCharactersPhrase = "Your name should only contain basic letters! Try again...";
@@ -44,7 +44,7 @@ class Bot {
     private final String happyGoodbyePhrase = "It was great chatting with you, %s! Keep spreading that positive energy! Have a fantastic day!";
     private final String sadGoodbyePhrase = "I\'m really glad we talked, %s. Remember, you\'re not alone, and I\'m always here if you need me. Take care.";
     private final String stressedGoodbyePhrase = "I know things might be tough, %s, but you\'ve got this!"
-                                + "Try to take a deep breath and do something nice for yourself today. See you next time!";
+                                + " Try to take a deep breath and do something nice for yourself today. See you next time!";
                                 
     private final String neutralGoodbyePhrase = "Thanks for stopping by, %s! If you ever want to chat again, I\'m here. Have a great day!";
     private final String defaultGoodbyePhrase = "If you don\'t want to have a conversation with me it is totally fine, have a nice day!";
