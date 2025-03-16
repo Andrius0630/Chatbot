@@ -4,7 +4,8 @@ import java.util.Scanner;
 /*
 
 What to fix:
-    2) The code repeats similar logic for handling different moods in several places. For example, the switch statement inside startConversationLoop() could be refactored into a single method that accepts the mood as a parameter.
+    1) use tryCatch
+    2) more modular funcs
 
 */
 
