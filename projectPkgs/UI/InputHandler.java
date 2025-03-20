@@ -1,5 +1,5 @@
 /*
-* kolendarik123@gmail.com
+* andrius.kolenda@mif.stud.vu.lt
 * Purpose: universal input handling
 * 2025-03-20
 */

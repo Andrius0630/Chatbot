@@ -1,5 +1,5 @@
 /*
-* kolendarik123@gmail.com
+* andrius.kolenda@mif.stud.vu.lt
 * Purpose: Custom data structure creation
 * 2025-03-20
 */

@@ -1,5 +1,5 @@
 /*
-* kolendarik123@gmail.com
+* andrius.kolenda@mif.stud.vu.lt
 * Purpose: creation and initialization of chatbot's main conversation loop
 * 2025-03-20
 */

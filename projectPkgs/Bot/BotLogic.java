@@ -1,5 +1,5 @@
 /*
-* kolendarik123@gmail.com
+* andrius.kolenda@mif.stud.vu.lt
 * Purpose: main chatbot's logic rules
 * 2025-03-20
 */
@@ -286,8 +286,7 @@ public class BotLogic {
         printBotPhrase(userNameAcceptedPhrase, userName);
     }
 
-
-
+    
     private String getAppropriateUserInput() {
         String input = "";
 
