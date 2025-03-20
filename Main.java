@@ -1,24 +1,19 @@
 /*
 * kolendarik123@gmail.com
-* main (todo)
-* 2025-03-19
+* Purpose: creation and initialization of chatbot's main conversation loop
+* 2025-03-20
 */
 
 import projectPkgs.Bot.BotLogic;
 
-/*
-What to fix:
-    1) use tryCatch
-    2) more modular funcs
-*/
 
 public class Main {
     public static void main(String[] args) {
         try {
             BotLogic bot = new BotLogic();
             bot.startConversationLoop();
-        } catch (Exception _) {
-
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
